@@ -25,6 +25,7 @@ class LadingPageSaaS01 extends StatefulWidget {
 }
 
 class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<String> logoImages = [
     'https://framerusercontent.com/images/ZrQngLHLSVrmCi9Jog3LkyFNcI.png?scale-down-to=512',
     'https://framerusercontent.com/images/iSftT2JXqVgfLxuEHrIccSOoM.png?scale-down-to=512',
@@ -35,6 +36,7 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
+    final horizontalPadding = screenWidth > 1200 ? 120.0 : 24.0;
 
     return Container(
       width: double.infinity,
@@ -44,171 +46,218 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
             Color(0xFFE8F4FF),
             Color(0xFFFFFDE7),
             Colors.white,
+            Colors.white, // Duplicado para fortalecer o branco no final
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
-          stops: const [0.0, 0.5, 1.0],
+          stops: const [
+            0.0,
+            0.3,
+            0.6,
+            1.0
+          ], // Ajustado para terminar mais em branco
         ),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Logo
-                  Image.network(
-                    'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
-                    height: 32,
+      child: Column(
+        children: [
+          // Header
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 24,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Logo
+                Image.network(
+                  'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
+                  height: 32,
+                )
+                    .animate()
+                    .fadeIn(duration: 600.ms)
+                    .slideX(begin: -0.2, end: 0),
+
+                // Menu centralizado
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (!isMobile) ...[
+                        _buildNavItem('Home'),
+                        SizedBox(width: 40),
+                        _buildNavItem('About'),
+                        SizedBox(width: 40),
+                        _buildNavItem('Services'),
+                      ],
+                    ],
+                  ),
+                ),
+
+                // Botão Contact
+                _buildContactButton(),
+              ],
+            ),
+          ),
+
+          // Hero Section com padding maior
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: isMobile ? 24 : 60,
+            ),
+            child: !isMobile
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Conteúdo da esquerda
+                      Expanded(
+                        child: _buildLeftContent(isMobile),
+                      ),
+                      // Imagem hero
+                      Expanded(
+                        child: _buildHeroImage(isMobile),
+                      ),
+                    ],
                   )
-                      .animate()
-                      .fadeIn(duration: 600.ms)
-                      .slideX(begin: -0.2, end: 0),
+                : Column(
+                    children: [
+                      _buildLeftContent(isMobile),
+                      _buildHeroImage(isMobile),
+                    ],
+                  ),
+          ),
 
-                  // Menu centralizado
-                  if (!isMobile)
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildNavItem('Home'),
-                          _buildNavItem('About'),
-                          _buildNavItem('Services'),
-                        ],
-                      ),
-                    ),
-
-                  // Botão Contact
-                  if (!isMobile)
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFFF9C4),
-                        foregroundColor: Color(0xFF333333),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+          // Carrossel atualizado
+          Container(
+            margin: EdgeInsets.symmetric(vertical: isMobile ? 24 : 40),
+            height: 40,
+            child: CarouselSlider(
+              options: CarouselOptions(
+                height: 40,
+                autoPlay: true,
+                viewportFraction: isMobile ? 0.4 : 0.15,
+                enlargeCenterPage: false,
+                autoPlayInterval: Duration(milliseconds: 0),
+                scrollPhysics: NeverScrollableScrollPhysics(),
+                autoPlayAnimationDuration:
+                    Duration(seconds: 2), // Mais rápido ainda
+                autoPlayCurve: Curves.linear,
+                pauseAutoPlayInFiniteScroll: false,
+                initialPage: 1,
+              ),
+              items: [
+                ...logoImages,
+                ...logoImages,
+              ].map((url) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: Image.network(
+                          url,
+                          fit: BoxFit.contain,
+                          color: Color(0xFF666666),
+                          height: 30,
                         ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
                       ),
-                      child: Text('Contact',
-                          style:
-                              GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                    )
-                        .animate()
-                        .fadeIn(duration: 600.ms)
-                        .slideX(begin: 0.2, end: 0),
+                    );
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                  if (isMobile)
-                    IconButton(
-                      icon: Icon(Icons.menu),
-                      onPressed: () {},
-                    ),
-                ],
+  Widget _buildMobileMenu() {
+    return Drawer(
+      child: Container(
+        color: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE8F4FF), Color(0xFFFFFDE7)],
+                ),
+              ),
+              child: Image.network(
+                'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
+                height: 32,
               ),
             ),
-
-            // Hero Section
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: isMobile ? 24 : 40,
-              ),
-              child: !isMobile
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Conteúdo da esquerda
-                        Expanded(
-                          child: _buildLeftContent(isMobile),
-                        ),
-                        // Imagem hero
-                        Expanded(
-                          child: _buildHeroImage(isMobile),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      children: [
-                        _buildLeftContent(isMobile),
-                        _buildHeroImage(isMobile),
-                      ],
-                    ),
+            ListTile(
+              title: Text('Home',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+              onTap: () {},
             ),
-
-            // Logo Carousel atualizado
-            Container(
-              margin: EdgeInsets.symmetric(vertical: isMobile ? 24 : 40),
-              height: 40,
-              child: Stack(
-                children: [
-                  // Máscara de gradiente para suavizar as bordas
-                  Positioned.fill(
-                    child: IgnorePointer(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withOpacity(1),
-                              Colors.white.withOpacity(0),
-                              Colors.white.withOpacity(0),
-                              Colors.white.withOpacity(1),
-                            ],
-                            stops: const [0.0, 0.1, 0.9, 1.0],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      height: 40,
-                      autoPlay: true,
-                      viewportFraction: isMobile ? 0.4 : 0.15,
-                      enlargeCenterPage: false,
-                      autoPlayInterval: Duration(milliseconds: 0),
-                      scrollPhysics: NeverScrollableScrollPhysics(),
-                      autoPlayAnimationDuration: Duration(seconds: 10),
-                      autoPlayCurve: Curves.linear,
-                      pauseAutoPlayInFiniteScroll: false,
-                      initialPage: 1,
-                    ),
-                    items: [
-                      ...logoImages,
-                      ...logoImages,
-                    ].map((url) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Container(
-                            margin: EdgeInsets.symmetric(horizontal: 10),
-                            child: MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: Image.network(
-                                url,
-                                fit: BoxFit.contain,
-                                color: Color(0xFF666666),
-                                height: 30,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
+            ListTile(
+              title: Text('About',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Services',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text('Contact',
+                  style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
+              onTap: () {},
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildContactButton() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFFFFF9C4),
+          foregroundColor: Color(0xFF333333),
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          minimumSize: Size(120, 48),
+        ).copyWith(
+          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(MaterialState.hovered)) {
+                return Color(0xFF333333);
+              }
+              return null;
+            },
+          ),
+          foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(MaterialState.hovered)) {
+                return Colors.white;
+              }
+              return Color(0xFF333333);
+            },
+          ),
+        ),
+        child: Text(
+          'Contact',
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    ).animate().fadeIn(duration: 600.ms).slideX(begin: 0.2, end: 0);
   }
 
   Widget _buildNavItem(String text) {
@@ -306,5 +355,51 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
         .animate()
         .fadeIn(duration: 800.ms, delay: 200.ms)
         .slideX(begin: 0.2, end: 0);
+  }
+
+  // Atualização do botão Start Project para ficar igual ao Contact
+  Widget _buildStartProjectButton(bool isMobile) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFFFFF9C4),
+          foregroundColor: Color(0xFF333333),
+          padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          minimumSize: Size(160, 48),
+        ).copyWith(
+          overlayColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(MaterialState.hovered)) {
+                return Color(0xFF333333);
+              }
+              return null;
+            },
+          ),
+          foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+              if (states.contains(MaterialState.hovered)) {
+                return Colors.white;
+              }
+              return Color(0xFF333333);
+            },
+          ),
+        ),
+        child: Text(
+          'Start Project',
+          style: GoogleFonts.inter(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    )
+        .animate()
+        .fadeIn(duration: 800.ms, delay: 400.ms)
+        .slideY(begin: 0.2, end: 0);
   }
 }
