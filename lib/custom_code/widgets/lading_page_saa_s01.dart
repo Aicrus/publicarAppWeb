@@ -37,7 +37,12 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
-    final horizontalPadding = screenWidth > 1200 ? 120.0 : 24.0;
+    final isTablet = screenWidth < 1200 && screenWidth >= 768;
+    final horizontalPadding = screenWidth > 1200
+        ? 120.0
+        : isTablet
+            ? 60.0
+            : 24.0;
 
     return Stack(
       children: [
@@ -190,12 +195,15 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
                   options: CarouselOptions(
                     height: 30,
                     autoPlay: true,
-                    viewportFraction: isMobile ? 0.4 : 0.15,
+                    viewportFraction: isMobile
+                        ? 0.4
+                        : isTablet
+                            ? 0.25
+                            : 0.15,
                     enlargeCenterPage: false,
                     autoPlayInterval: Duration(milliseconds: 0),
                     scrollPhysics: NeverScrollableScrollPhysics(),
-                    autoPlayAnimationDuration:
-                        Duration(milliseconds: 800), // Mais rápido
+                    autoPlayAnimationDuration: Duration(milliseconds: 500),
                     autoPlayCurve: Curves.linear,
                     pauseAutoPlayInFiniteScroll: false,
                     initialPage: 1,
@@ -227,140 +235,139 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
         // Menu mobile overlay
         if (isMobile && _isMenuOpen)
           Positioned.fill(
-            child: Container(
+            child: Material(
               color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Image.network(
-                          'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
-                          height: 28,
-                        ),
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () => setState(() => _isMenuOpen = false),
-                            child: Icon(Icons.close, size: 24),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.network(
+                            'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
+                            height: 28,
                           ),
-                        ),
-                      ],
+                          IconButton(
+                            icon: Icon(Icons.close, size: 24),
+                            onPressed: () =>
+                                setState(() => _isMenuOpen = false),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 40),
-                  ...[
-                    'Home',
-                    'About',
-                    'Services',
-                    'Contact',
-                  ].map((text) => InkWell(
-                        onTap: () {
-                          setState(() => _isMenuOpen = false);
-                          // Adicionar navegação aqui
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
-                          child: Text(
-                            text,
-                            style: GoogleFonts.inter(
-                              color: text == 'Home'
-                                  ? Color(0xFF333333)
-                                  : Color(0xFF666666),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 24,
-                            ),
-                          ),
-                        ),
-                      )),
-                ],
+                    SizedBox(height: 40),
+                    ...[
+                      'Home',
+                      'About',
+                      'Services',
+                      'Contact',
+                    ]
+                        .map((text) => InkWell(
+                              onTap: () {
+                                setState(() => _isMenuOpen = false);
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 16,
+                                ),
+                                child: Text(
+                                  text,
+                                  style: GoogleFonts.inter(
+                                    color: text == 'Home'
+                                        ? Color(0xFF333333)
+                                        : Color(0xFF666666),
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24,
+                                  ),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                  ],
+                ),
               ),
-            ).animate().fadeIn(duration: 300.ms).slideY(begin: -0.1, end: 0),
+            ),
           ),
       ],
     );
   }
 
   Widget _buildNavItem(String text, bool isActive) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: InkWell(
-        onTap: () {},
-        hoverColor: Colors.transparent,
-        child: Text(
-          text,
-          style: GoogleFonts.inter(
-            color: isActive ? Color(0xFF333333) : Color(0xFF666666),
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-          ),
-        )
-            .animate(
-              onPlay: (controller) => controller.repeat(),
-            )
-            .shimmer(
-              duration: 1200.ms,
-              delay: 200.ms,
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isHovered = false;
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: InkWell(
+            onTap: () {},
+            hoverColor: Colors.transparent,
+            child: Text(
+              text,
+              style: GoogleFonts.inter(
+                color: isActive
+                    ? Color(0xFF333333)
+                    : isHovered
+                        ? Color(0xFF333333)
+                        : Color(0xFF666666),
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
             ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildContactButton() {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: StatefulBuilder(
-        builder: (context, setState) {
-          bool isHovered = false;
-          return InkWell(
-            onHover: (value) => setState(() => isHovered = value),
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isHovered = false;
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: GestureDetector(
             onTap: () {},
             child: AnimatedContainer(
               duration: Duration(milliseconds: 200),
               decoration: BoxDecoration(
                 color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
                 borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                child: Text(
-                  'Contact',
-                  style: GoogleFonts.inter(
-                    color: isHovered ? Colors.white : Color(0xFF333333),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
+              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              child: Text(
+                'Contact',
+                style: GoogleFonts.inter(
+                  color: isHovered ? Colors.white : Color(0xFF333333),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
                 ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildMobileMenu() {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
+    return GestureDetector(
+      onTap: () {
+        if (!_isMenuOpen) {
           setState(() {
             _isMenuOpen = true;
           });
-        },
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: List.generate(
