@@ -293,15 +293,12 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
       child: InkWell(
         onTap: () {},
         hoverColor: Colors.transparent,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          child: Text(
-            text,
-            style: GoogleFonts.inter(
-              color: isActive ? Color(0xFF333333) : Color(0xFF666666),
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
+        child: Text(
+          text,
+          style: GoogleFonts.inter(
+            color: isActive ? Color(0xFF333333) : Color(0xFF666666),
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
           ),
         )
             .animate(
@@ -312,49 +309,45 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
               delay: 200.ms,
             ),
       ),
-    ).animate().fadeIn(duration: 600.ms);
+    );
   }
 
   Widget _buildContactButton() {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: InkWell(
-        onTap: () {},
-        hoverColor: Colors.transparent,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFFFF9C4),
-              borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              child: Text(
-                'Contact',
-                style: GoogleFonts.inter(
-                  color: Color(0xFF333333),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          bool isHovered = false;
+          return InkWell(
+            onHover: (value) => setState(() => isHovered = value),
+            onTap: () {},
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child: Text(
+                  'Contact',
+                  style: GoogleFonts.inter(
+                    color: isHovered ? Colors.white : Color(0xFF333333),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ),
-          ),
-        )
-            .animate(
-              onPlay: (controller) => controller.repeat(),
-            )
-            .shimmer(
-              duration: 1200.ms,
-              delay: 200.ms,
-            ),
+          );
+        },
       ),
     );
   }
@@ -368,31 +361,20 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
             _isMenuOpen = true;
           });
         },
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(
-                3,
-                (index) => Container(
-                      width: 24,
-                      height: 2,
-                      margin: EdgeInsets.symmetric(vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF333333),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    )),
-          ),
-        )
-            .animate(
-              onPlay: (controller) => controller.repeat(),
-            )
-            .shimmer(
-              duration: 1200.ms,
-              delay: 200.ms,
-            ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+              3,
+              (index) => Container(
+                    width: 24,
+                    height: 2,
+                    margin: EdgeInsets.symmetric(vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF333333),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  )),
+        ),
       ),
     );
   }
@@ -400,46 +382,42 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
   Widget _buildStartProjectButton(bool isMobile) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: InkWell(
-        onTap: () {},
-        hoverColor: Colors.transparent,
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFFFF9C4),
-              borderRadius: BorderRadius.circular(50),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: isMobile ? 32 : 48,
-                vertical: 16,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          bool isHovered = false;
+          return InkWell(
+            onHover: (value) => setState(() => isHovered = value),
+            onTap: () {},
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
-              child: Text(
-                'Start Project',
-                style: GoogleFonts.inter(
-                  color: Color(0xFF333333),
-                  fontWeight: FontWeight.w500,
-                  fontSize: isMobile ? 16 : 18,
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: isMobile ? 32 : 48,
+                  vertical: 16,
+                ),
+                child: Text(
+                  'Start Project',
+                  style: GoogleFonts.inter(
+                    color: isHovered ? Colors.white : Color(0xFF333333),
+                    fontWeight: FontWeight.w500,
+                    fontSize: isMobile ? 16 : 18,
+                  ),
                 ),
               ),
             ),
-          ),
-        )
-            .animate(
-              onPlay: (controller) => controller.repeat(),
-            )
-            .shimmer(
-              duration: 1200.ms,
-              delay: 200.ms,
-            ),
+          );
+        },
       ),
     );
   }
