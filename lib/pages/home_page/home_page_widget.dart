@@ -1,4 +1,3 @@
-import '/components/modal_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/custom_code/widgets/index.dart' as custom_widgets;
@@ -45,50 +44,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         backgroundColor: FlutterFlowTheme.of(context).secondaryBackground,
         body: SafeArea(
           top: true,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: 800.0,
-                  child: custom_widgets.LandingPage(
-                    width: MediaQuery.sizeOf(context).width * 1.0,
-                    height: 800.0,
-                    onGetStartedPressed: () async {
-                      await showModalBottomSheet(
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: false,
-                        context: context,
-                        builder: (context) {
-                          return GestureDetector(
-                            onTap: () {
-                              FocusScope.of(context).unfocus();
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: Padding(
-                              padding: MediaQuery.viewInsetsOf(context),
-                              child: const SizedBox(
-                                height: 700.0,
-                                child: ModalWidget(),
-                              ),
-                            ),
-                          );
-                        },
-                      ).then((value) => safeSetState(() {}));
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 1.0,
-                  height: 800.0,
-                  child: custom_widgets.Plan(
-                    width: MediaQuery.sizeOf(context).width * 1.0,
-                    height: 800.0,
-                  ),
-                ),
-              ],
+          child: SizedBox(
+            width: MediaQuery.sizeOf(context).width * 1.0,
+            height: MediaQuery.sizeOf(context).height * 1.0,
+            child: custom_widgets.LadingPageSaaS01(
+              width: MediaQuery.sizeOf(context).width * 1.0,
+              height: MediaQuery.sizeOf(context).height * 1.0,
             ),
           ),
         ),

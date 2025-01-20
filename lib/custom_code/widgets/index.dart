@@ -1,4 +1,1 @@
-export 'landing_page.dart' show LandingPage;
-export 'modal.dart' show Modal;
-export 'netflix.dart' show Netflix;
-export 'plan.dart' show Plan;
+export 'lading_page_saa_s01.dart' show LadingPageSaaS01;
