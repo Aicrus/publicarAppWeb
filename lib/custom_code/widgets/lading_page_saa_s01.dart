@@ -36,18 +36,50 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
-    final isTablet = screenWidth < 1200 && screenWidth >= 768;
-    final horizontalPadding = screenWidth > 1200
+
+    // Melhorando os breakpoints
+    final isMobile = screenWidth < 640;
+    final isTablet = screenWidth >= 640 && screenWidth < 1024;
+    final isDesktop = screenWidth >= 1024;
+
+    // Ajustando paddings responsivos
+    final horizontalPadding = isDesktop
         ? 120.0
         : isTablet
             ? 60.0
+            : 24.0;
+
+    // Ajustando tamanhos de fonte responsivos
+    final titleSize = isDesktop
+        ? 48.0
+        : isTablet
+            ? 40.0
+            : 32.0;
+
+    final subtitleSize = isDesktop
+        ? 18.0
+        : isTablet
+            ? 16.0
+            : 14.0;
+
+    final buttonTextSize = isDesktop ? 18.0 : 16.0;
+
+    // Ajustando espaçamentos
+    final verticalSpacing = isDesktop
+        ? 60.0
+        : isTablet
+            ? 40.0
             : 24.0;
 
     return Stack(
       children: [
         Container(
           width: double.infinity,
+          constraints: BoxConstraints(
+            maxWidth: 1440, // Máxima largura para telas muito grandes
+          ),
+          padding: EdgeInsets.only(
+              top: isMobile ? 48.0 : 32.0), // Padding superior adicional
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -67,7 +99,7 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: horizontalPadding,
-                  vertical: 24,
+                  vertical: verticalSpacing * 0.4,
                 ),
                 child: Stack(
                   alignment: Alignment.center,
@@ -112,120 +144,126 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: horizontalPadding,
-                  vertical: isMobile ? 24 : 60,
+                  vertical: verticalSpacing,
                 ),
                 child: !isMobile
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Conteúdo da esquerda
                           Expanded(
+                            flex: isDesktop ? 1 : 2,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'AdVantage: Propel Your Marketing & Sales to New Heights!',
                                   style: GoogleFonts.inter(
-                                    fontSize: 48,
+                                    fontSize: titleSize,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF333333),
                                     height: 1.2,
                                   ),
                                 ),
-                                SizedBox(height: 24),
+                                SizedBox(height: verticalSpacing * 0.5),
                                 Text(
                                   'Streamline your efforts, generate higher quality leads, close deals efficiently, and ultimately, accelerate your business growth like never before.',
                                   style: GoogleFonts.inter(
-                                    fontSize: 18,
+                                    fontSize: subtitleSize,
                                     color: Color(0xFF666666),
                                     height: 1.5,
                                   ),
                                 ),
-                                SizedBox(height: 40),
-                                _buildStartProjectButton(isMobile),
+                                SizedBox(height: verticalSpacing),
+                                _buildStartProjectButton(
+                                    isMobile, buttonTextSize),
                               ],
                             ),
                           ),
-                          SizedBox(width: 40),
+                          SizedBox(width: horizontalPadding),
                           // Imagem hero
                           Expanded(
-                            child: _buildHeroImage(isMobile),
+                            flex: isDesktop ? 1 : 1,
+                            child: _buildHeroImage(isMobile, isTablet),
                           ),
                         ],
                       )
                     : Column(
                         children: [
-                          // Título centralizado
+                          // Versão mobile com textos centralizados
                           Text(
                             'AdVantage: Propel Your Marketing & Sales to New Heights!',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
-                              fontSize: 32,
+                              fontSize: titleSize,
                               fontWeight: FontWeight.bold,
                               color: Color(0xFF333333),
                               height: 1.2,
                             ),
                           ),
-                          SizedBox(height: 24),
-                          // Subtítulo centralizado
+                          SizedBox(height: verticalSpacing * 0.5),
                           Text(
                             'Streamline your efforts, generate higher quality leads, close deals efficiently, and ultimately, accelerate your business growth like never before.',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.inter(
-                              fontSize: 16,
+                              fontSize: subtitleSize,
                               color: Color(0xFF666666),
                               height: 1.5,
                             ),
                           ),
-                          SizedBox(height: 32),
-                          // Botão centralizado
-                          _buildStartProjectButton(isMobile),
-                          SizedBox(height: 40),
-                          // Imagem
-                          _buildHeroImage(isMobile),
+                          SizedBox(height: verticalSpacing),
+                          _buildStartProjectButton(isMobile, buttonTextSize),
+                          SizedBox(height: verticalSpacing),
+                          _buildHeroImage(isMobile, isTablet),
                         ],
                       ),
               ),
 
               // Carrossel de logos com animação mais rápida
               Container(
-                margin: EdgeInsets.symmetric(vertical: 40),
+                margin: EdgeInsets.symmetric(vertical: verticalSpacing),
                 height: 30,
-                child: CarouselSlider(
-                  options: CarouselOptions(
-                    height: 30,
-                    autoPlay: true,
-                    viewportFraction: isMobile
-                        ? 0.4
-                        : isTablet
-                            ? 0.25
-                            : 0.15,
-                    enlargeCenterPage: false,
-                    autoPlayInterval: Duration(milliseconds: 0),
-                    scrollPhysics: NeverScrollableScrollPhysics(),
-                    autoPlayAnimationDuration: Duration(milliseconds: 500),
-                    autoPlayCurve: Curves.linear,
-                    pauseAutoPlayInFiniteScroll: false,
-                    initialPage: 1,
-                  ),
-                  items: [
-                    ...logoImages,
-                    ...logoImages,
-                  ].map((url) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
-                          child: Image.network(
-                            url,
-                            fit: BoxFit.contain,
-                            color: Color(0xFF666666),
-                            height: 20,
-                          ),
+                child: Stack(
+                  children: [
+                    CarouselSlider(
+                      options: CarouselOptions(
+                        height: 30,
+                        autoPlay: true,
+                        viewportFraction: isMobile
+                            ? 0.4
+                            : isTablet
+                                ? 0.25
+                                : 0.15,
+                        enlargeCenterPage: false,
+                        autoPlayInterval: Duration(milliseconds: 0),
+                        scrollPhysics: NeverScrollableScrollPhysics(),
+                        autoPlayAnimationDuration: Duration(milliseconds: 2000),
+                        autoPlayCurve: Curves.linear,
+                        pauseAutoPlayInFiniteScroll: false,
+                        initialPage: 0,
+                        reverse: false,
+                      ),
+                      items: [
+                        ...logoImages,
+                        ...logoImages,
+                        ...logoImages,
+                        ...logoImages,
+                      ].map((url) {
+                        return Builder(
+                          builder: (BuildContext context) {
+                            return Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                              child: Image.network(
+                                url,
+                                fit: BoxFit.contain,
+                                color: Color(0xFF666666),
+                                height: 20,
+                              ),
+                            );
+                          },
                         );
-                      },
-                    );
-                  }).toList(),
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -235,59 +273,111 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
         // Menu mobile overlay
         if (isMobile && _isMenuOpen)
           Positioned.fill(
-            child: Material(
-              color: Colors.white,
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(24),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Image.network(
-                            'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
-                            height: 28,
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.close, size: 24),
-                            onPressed: () =>
-                                setState(() => _isMenuOpen = false),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 40),
-                    ...[
-                      'Home',
-                      'About',
-                      'Services',
-                      'Contact',
-                    ]
-                        .map((text) => InkWell(
-                              onTap: () {
-                                setState(() => _isMenuOpen = false);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
-                                ),
-                                child: Text(
-                                  text,
-                                  style: GoogleFonts.inter(
-                                    color: text == 'Home'
-                                        ? Color(0xFF333333)
-                                        : Color(0xFF666666),
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 24,
-                                  ),
-                                ),
+            child: AnimatedOpacity(
+              duration: Duration(milliseconds: 300),
+              opacity: _isMenuOpen ? 1.0 : 0.0,
+              child: Container(
+                color: Colors.white,
+                child: SafeArea(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 24,
+                          right: 24,
+                          top: 16,
+                          bottom: 24,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.network(
+                              'https://framerusercontent.com/images/tUOOSLf6vrSzJqB1hRIAseDuXjk.png?scale-down-to=512',
+                              height: 28,
+                            ),
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () => setState(() => _isMenuOpen = false),
+                              child: StatefulBuilder(
+                                builder: (context, setState) {
+                                  bool isHovered = false;
+                                  return MouseRegion(
+                                    onEnter: (_) =>
+                                        setState(() => isHovered = true),
+                                    onExit: (_) =>
+                                        setState(() => isHovered = false),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 24,
+                                        color: isHovered
+                                            ? Color(0xFF666666)
+                                            : Color(0xFF333333),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ))
-                        .toList(),
-                  ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      ...[
+                        'Home',
+                        'About',
+                        'Services',
+                        'Contact',
+                      ]
+                          .map((text) => StatefulBuilder(
+                                builder: (context, setState) {
+                                  bool isHovered = false;
+                                  return MouseRegion(
+                                    onEnter: (_) =>
+                                        setState(() => isHovered = true),
+                                    onExit: (_) =>
+                                        setState(() => isHovered = false),
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.opaque,
+                                      onTap: () {
+                                        setState(() {
+                                          _isMenuOpen = false;
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 200),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: isHovered ? 28 : 24,
+                                          vertical: 16,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isHovered
+                                              ? Color(0xFFF5F5F5)
+                                              : Colors.transparent,
+                                        ),
+                                        child: Text(
+                                          text,
+                                          style: GoogleFonts.inter(
+                                            color: isHovered || text == 'Home'
+                                                ? Color(0xFF333333)
+                                                : Color(0xFF666666),
+                                            fontWeight:
+                                                isHovered || text == 'Home'
+                                                    ? FontWeight.w600
+                                                    : FontWeight.w500,
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ))
+                          .toList(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -297,129 +387,39 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
   }
 
   Widget _buildNavItem(String text, bool isActive) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        bool isHovered = false;
-        return MouseRegion(
-          cursor: SystemMouseCursors.click,
-          onEnter: (_) => setState(() => isHovered = true),
-          onExit: (_) => setState(() => isHovered = false),
-          child: InkWell(
-            onTap: () {},
-            hoverColor: Colors.transparent,
-            child: Text(
-              text,
-              style: GoogleFonts.inter(
-                color: isActive
-                    ? Color(0xFF333333)
-                    : isHovered
-                        ? Color(0xFF333333)
-                        : Color(0xFF666666),
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildContactButton() {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        bool isHovered = false;
-        return MouseRegion(
-          cursor: SystemMouseCursors.click,
-          onEnter: (_) => setState(() => isHovered = true),
-          onExit: (_) => setState(() => isHovered = false),
-          child: GestureDetector(
-            onTap: () {},
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
-                borderRadius: BorderRadius.circular(50),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              child: Text(
-                'Contact',
-                style: GoogleFonts.inter(
-                  color: isHovered ? Colors.white : Color(0xFF333333),
-                  fontWeight: FontWeight.w500,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildMobileMenu() {
-    return GestureDetector(
-      onTap: () {
-        if (!_isMenuOpen) {
-          setState(() {
-            _isMenuOpen = true;
-          });
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(
-              3,
-              (index) => Container(
-                    width: 24,
-                    height: 2,
-                    margin: EdgeInsets.symmetric(vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF333333),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  )),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStartProjectButton(bool isMobile) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
+    return Material(
+      color: Colors.transparent,
       child: StatefulBuilder(
         builder: (context, setState) {
           bool isHovered = false;
-          return InkWell(
-            onHover: (value) => setState(() => isHovered = value),
-            onTap: () {},
+          return MouseRegion(
+            onEnter: (_) => setState(() => isHovered = true),
+            onExit: (_) => setState(() => isHovered = false),
             child: AnimatedContainer(
               duration: Duration(milliseconds: 200),
-              decoration: BoxDecoration(
-                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
-                borderRadius: BorderRadius.circular(50),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 4),
-                  ),
-                ],
+              padding: EdgeInsets.symmetric(
+                vertical: 8,
+                horizontal: isHovered ? 14 : 12,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isMobile ? 32 : 48,
-                  vertical: 16,
-                ),
-                child: Text(
-                  'Start Project',
-                  style: GoogleFonts.inter(
-                    color: isHovered ? Colors.white : Color(0xFF333333),
-                    fontWeight: FontWeight.w500,
-                    fontSize: isMobile ? 16 : 18,
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: isHovered || isActive
+                        ? Color(0xFF333333)
+                        : Colors.transparent,
+                    width: 2,
                   ),
+                ),
+              ),
+              child: Text(
+                text,
+                style: GoogleFonts.inter(
+                  color: isHovered || isActive
+                      ? Color(0xFF333333)
+                      : Color(0xFF666666),
+                  fontWeight:
+                      isHovered || isActive ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: 16,
                 ),
               ),
             ),
@@ -429,10 +429,140 @@ class _LadingPageSaaS01State extends State<LadingPageSaaS01> {
     );
   }
 
-  Widget _buildHeroImage(bool isMobile) {
+  Widget _buildContactButton() {
+    return Material(
+      color: Colors.transparent,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          bool isHovered = false;
+          return MouseRegion(
+            onEnter: (_) => setState(() => isHovered = true),
+            onExit: (_) => setState(() => isHovered = false),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: isHovered
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        )
+                      ]
+                    : [],
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: isHovered ? 34 : 32,
+                vertical: isHovered ? 14 : 12,
+              ),
+              child: Text(
+                'Contact',
+                style: GoogleFonts.inter(
+                  color: isHovered ? Colors.white : Color(0xFF333333),
+                  fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildMobileMenu() {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        bool isHovered = false;
+        return MouseRegion(
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              setState(() {
+                _isMenuOpen = true;
+              });
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(
+                    3,
+                    (index) => Container(
+                          width: 24,
+                          height: 2,
+                          margin: EdgeInsets.symmetric(vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isHovered
+                                ? Color(0xFF666666)
+                                : Color(0xFF333333),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        )),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStartProjectButton(bool isMobile, double fontSize) {
+    return Material(
+      color: Colors.transparent,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          bool isHovered = false;
+          return MouseRegion(
+            onEnter: (_) => setState(() => isHovered = true),
+            onExit: (_) => setState(() => isHovered = false),
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isHovered ? Color(0xFF333333) : Color(0xFFFFF9C4),
+                borderRadius: BorderRadius.circular(50),
+                boxShadow: isHovered
+                    ? [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        )
+                      ]
+                    : [],
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal:
+                    isMobile ? (isHovered ? 34 : 32) : (isHovered ? 50 : 48),
+                vertical: isHovered ? 18 : 16,
+              ),
+              child: Text(
+                'Start Project',
+                style: GoogleFonts.inter(
+                  color: isHovered ? Colors.white : Color(0xFF333333),
+                  fontWeight: isHovered ? FontWeight.w600 : FontWeight.w500,
+                  fontSize: fontSize,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildHeroImage(bool isMobile, bool isTablet) {
     return Container(
       width: double.infinity,
-      height: isMobile ? 300 : 400,
+      height: isMobile
+          ? 300
+          : isTablet
+              ? 350
+              : 400,
       child: Image.network(
         'https://framerusercontent.com/images/ajES5dmnyWqAlHSYD1e42adRra4.png?scale-down-to=1024',
         fit: BoxFit.contain,
