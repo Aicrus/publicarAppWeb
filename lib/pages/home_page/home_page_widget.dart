@@ -40,6 +40,18 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Colors.white,
+        body: SafeArea(
+          top: true,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.network(
+              'https://picsum.photos/seed/407/600',
+              width: 200.0,
+              height: 200.0,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
       ),
     );
   }
